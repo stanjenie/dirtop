@@ -83,18 +83,17 @@ syracuse = Seq
         (Let "x" (Custom "/" (Var "x") (Val 2)))))
     (Let "print" (Custom "string:[Reached 1]" (Val 0) (Val 0))))
 
+block :: String -> Prog -> Prog
+block a p = Seq (P a) (Seq p (V a))
+
 scale = Seq
   (Let "d" (Val 1))
   (Para 
-    (Seq (P "a") (Seq (Let "d" (Val 0)) (V "a")))
-    (Seq (P "a") (Seq 
+    (block "a" (Let "d" (Val 0)))
+    (block "a" 
       (Cond (b_neq (Var "d") (Val 0)) 
         (Let "y" (Custom "/" (Var "x") (Var "d"))) 
-        (Let "y" (Var "x"))) 
-      (V "a"))))
-
-block :: String -> Prog -> Prog
-block a p = Seq (P a) (Seq p (V a))
+        (Let "y" (Var "x")))))
 
 
 main = do 
@@ -102,3 +101,4 @@ main = do
   print (work syracuse)
   print (work scale)
   print (work (While BTrue (block "a" Skip)))
+  print (work (While BTrue (P "a")))
